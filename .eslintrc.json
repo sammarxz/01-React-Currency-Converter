@@ -1,0 +1,19 @@
+{
+  "extends": "airbnb",
+  "parser": "babel-eslint",
+  "rules": {
+      "indent": [2, 4, { "SwitchCase": 1 }],
+      "max-len": [2, 120, 4, {
+          "ignoreUrls": true,
+          "ignoreComments": false
+      }],
+      "jsx-quotes": [2, "prefer-double"],
+      "no-return-assign": 0,
+      "react/jsx-indent-props": [2, 4],
+      "react/jsx-indent": [2, 4],
+      "react/jsx-max-props-per-line": [2, {"maximum": 3}],
+      "react/jsx-no-bind": [2, {
+          "ignoreRefs": true
+      }]
+  }
+}
