@@ -7,7 +7,7 @@ const CurrencyField = ({ label, name, currency, value, setValue }) => {
         <img src={`./img/${currency}.png`} alt={currency} />
         <span className="fw--medium">{currency}</span>
       </div>
-      <label for={name} className="fw--medium">
+      <label htmlFor={name} className="fw--medium">
         {label}
       </label>
       <input

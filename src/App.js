@@ -4,9 +4,17 @@ import CurrencyField from './components/CurrencyField'
 
 class App extends React.Component {
   state = {
-    fromValue: '',
+    from: 'BRL',
+    to: 'USD',
+    fromValue: 1,
     toValue: '',
     timer: null,
+  }
+
+  componentDidMount() {
+    if (this.state.fromValue) {
+      this.convert()
+    }
   }
 
   setAmount = (type, value) => {
@@ -16,14 +24,42 @@ class App extends React.Component {
 
     this.setState({
       [type]: value,
-      timer: setTimeout(this.convert, 1000),
+      // Only make the call to api when the user stops typing
+      timer: setTimeout(() => this.convert(type), 1000),
     })
   }
 
-  convert = () => {
-    const { fromValue } = this.state
-    // TODO: make the convertition
-    console.log(fromValue)
+  convert = (type) => {
+    let { from, to } = this.state
+
+    // Invert
+    if (type === 'toValue') {
+      from = 'USD'
+      to = 'BRL'
+    }
+
+    const { fromValue, toValue } = this.state
+    const URL = `https://api.ratesapi.io/api/latest?base=${from}&symbols=${to}`
+
+    fetch(URL)
+      .then((res) => res.json())
+      .then((json) => {
+        let price = json['rates'][to]
+        let coin = 0
+
+        if (type === 'toValue') {
+          coin = (parseFloat(toValue) * price).toFixed(2)
+          this.setState({
+            fromValue: coin,
+          })
+          return
+        }
+
+        coin = (parseFloat(fromValue) * price).toFixed(2)
+        this.setState({
+          toValue: coin,
+        })
+      })
   }
 
   render() {
@@ -34,12 +70,14 @@ class App extends React.Component {
         <div className="currency-converter d--flex a--center">
           <CurrencyField
             label="Amount"
+            name="amount"
             currency="BRL"
             value={fromValue}
             setValue={(value) => this.setAmount('fromValue', value)}
           />
           <CurrencyField
             label="Converted to"
+            name="converted"
             currency="USD"
             value={toValue}
             setValue={(value) => this.setAmount('toValue', value)}
