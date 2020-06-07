@@ -7,6 +7,8 @@ const BarChartComponent = ({ data }) => {
       <Bar
         data={data}
         options={{
+          responsive: true,
+          maintainAspectRatio: false,
           legend: {
             display: false,
           },

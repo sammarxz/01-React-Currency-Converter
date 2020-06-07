@@ -13,11 +13,13 @@ class App extends React.Component {
   }
 
   componentDidMount() {
+    const { from, to } = this.state
+
     if (this.state.fromValue) {
       this.convert()
     }
 
-    this.generateGraphData()
+    this.generateGraphData(from, to)
   }
 
   setAmount = (type, value) => {
@@ -84,9 +86,7 @@ class App extends React.Component {
     return datesArray
   }
 
-  generateGraphData = () => {
-    const { from, to } = this.state
-
+  generateGraphData = (from, to) => {
     const actualDate = new Date()
 
     const prevMonth = actualDate.getMonth()
