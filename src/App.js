@@ -39,13 +39,6 @@ class App extends React.Component {
     if (type === 'toValue') {
       from = 'USD'
       to = 'BRL'
-
-      this.setState({
-        from,
-        to,
-      })
-
-      this.generateGraphData()
     }
 
     const { fromValue, toValue } = this.state
@@ -131,6 +124,10 @@ class App extends React.Component {
             data: dataPrice,
             backgroundColor: '#5755d9',
             showXLabels: 10,
+            barPercentage: 0.5,
+            barThickness: 6,
+            maxBarThickness: 9,
+            minBarLength: 3,
           },
         ],
       },

@@ -7,6 +7,16 @@ const BarChartComponent = ({ data }) => {
       <Bar
         data={data}
         options={{
+          legend: {
+            display: false,
+          },
+          tooltips: {
+            callbacks: {
+              label: function (tooltipItem) {
+                return `R$ ${tooltipItem.yLabel.toFixed(2)}`
+              },
+            },
+          },
           scales: {
             xAxes: [
               {
