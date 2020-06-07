@@ -18,6 +18,19 @@ body {
   font-weight: 300;
 }
 
+a {
+  color: var(--primary);
+  text-decoration: none;
+}
+
+h1 {
+  font-size: 1.4rem;
+}
+
+h2 {
+  font-size: 1.2rem;
+}
+
 label {
   display: block;
   font-size: 0.8rem;
@@ -83,6 +96,14 @@ input,
   margin-right: 6px;
 }
 
+.chart {
+  margin-top: 40px;
+}
+
+.chart h1 {
+  margin-bottom: 20px;
+}
+
 .d--inlineBlock {
   display: inline-block;
 }
@@ -113,4 +134,8 @@ input,
 
 .a--center {
   align-items: center;
+}
+
+.c--primary {
+  color: var(--primary);
 }

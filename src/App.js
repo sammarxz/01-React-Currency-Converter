@@ -1,6 +1,7 @@
 import React from 'react'
 
 import CurrencyField from './components/CurrencyField'
+import BarChartComponent from './components/BarChartComponent'
 
 class App extends React.Component {
   state = {
@@ -15,6 +16,8 @@ class App extends React.Component {
     if (this.state.fromValue) {
       this.convert()
     }
+
+    this.generateGraphData()
   }
 
   setAmount = (type, value) => {
@@ -36,6 +39,13 @@ class App extends React.Component {
     if (type === 'toValue') {
       from = 'USD'
       to = 'BRL'
+
+      this.setState({
+        from,
+        to,
+      })
+
+      this.generateGraphData()
     }
 
     const { fromValue, toValue } = this.state
@@ -62,8 +72,73 @@ class App extends React.Component {
       })
   }
 
+  getDaysInMonth = (month, year) => {
+    return new Date(year, month, 0).getDate()
+  }
+
+  getMonthRange = (month, year, days, limit) => {
+    let datesArray = []
+
+    if (limit) {
+      days = limit
+    }
+
+    for (let day = 1; day <= days; day++) {
+      // criar um array de datas
+      datesArray.push([`${year}-${month}-${day}`])
+    }
+
+    return datesArray
+  }
+
+  generateGraphData = () => {
+    const { from, to } = this.state
+
+    const actualDate = new Date()
+
+    const prevMonth = actualDate.getMonth()
+    const actualMonth = actualDate.getMonth() + 1
+    const actualYear = actualDate.getFullYear()
+    const actualDay = actualDate.getDay()
+
+    const daysInPrevMonth = this.getDaysInMonth(prevMonth, actualYear)
+    const daysInactualMonth = this.getDaysInMonth(actualMonth, actualYear)
+
+    const dates = this.getMonthRange(prevMonth, actualYear, daysInPrevMonth).concat(
+      this.getMonthRange(actualMonth, actualYear, daysInactualMonth, actualDay)
+    )
+
+    let dataLabels = []
+    let dataPrice = []
+
+    dates.forEach((date) => {
+      const URL = `https://api.ratesapi.io/api/${date}?base=${from}&symbols=${to}`
+      fetch(URL)
+        .then((res) => res.json())
+        .then((json) => {
+          let price = parseFloat(json['rates'][to])
+          dataLabels.push(date)
+          dataPrice.push(price)
+        })
+    })
+
+    this.setState({
+      Data: {
+        labels: dataLabels,
+        datasets: [
+          {
+            label: 'Price',
+            data: dataPrice,
+            backgroundColor: '#5755d9',
+            showXLabels: 10,
+          },
+        ],
+      },
+    })
+  }
+
   render() {
-    const { fromValue, toValue } = this.state
+    const { fromValue, toValue, Data } = this.state
 
     return (
       <main className="container">
@@ -82,6 +157,10 @@ class App extends React.Component {
             value={toValue}
             setValue={(value) => this.setAmount('toValue', value)}
           />
+        </div>
+        <div className="chart">
+          <h1 className="fw--light">Exchange rate</h1>
+          {Data ? <BarChartComponent data={Data} /> : <>Loading</>}
         </div>
       </main>
     )
