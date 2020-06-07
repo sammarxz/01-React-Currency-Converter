@@ -13,13 +13,9 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    const { from, to } = this.state
-
     if (this.state.fromValue) {
       this.convert()
     }
-
-    this.generateGraphData(from, to)
   }
 
   setAmount = (type, value) => {
@@ -42,6 +38,8 @@ class App extends React.Component {
       from = 'USD'
       to = 'BRL'
     }
+
+    this.generateGraphData(from, to)
 
     const { fromValue, toValue } = this.state
     const URL = `https://api.ratesapi.io/api/latest?base=${from}&symbols=${to}`
@@ -92,7 +90,7 @@ class App extends React.Component {
     const prevMonth = actualDate.getMonth()
     const actualMonth = actualDate.getMonth() + 1
     const actualYear = actualDate.getFullYear()
-    const actualDay = actualDate.getDay()
+    const actualDay = actualDate.getDate()
 
     const daysInPrevMonth = this.getDaysInMonth(prevMonth, actualYear)
     const daysInactualMonth = this.getDaysInMonth(actualMonth, actualYear)
