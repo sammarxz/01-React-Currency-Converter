@@ -16,3 +16,4 @@ $ yarn start
 ### ToDo
 * [ ] - Add More Currencies 💰🪙
 * [ ] - The graph has a strange behavior 📊🤔
+* [ ] - DRY in Api calls
