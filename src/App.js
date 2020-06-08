@@ -11,12 +11,11 @@ class App extends React.Component {
     fromValue: 1,
     toValue: '',
     timer: null,
+    apiBase: 'https://api.ratesapi.io/api/',
   }
 
   componentDidMount() {
-    if (this.state.fromValue) {
-      this.convert()
-    }
+    this.convert()
   }
 
   setAmount = (type, value) => {
@@ -31,6 +30,11 @@ class App extends React.Component {
     })
   }
 
+  toFixed = (num, fixed) => {
+    const re = new RegExp('^-?\\d+(?:.\\d{0,' + (fixed || -1) + '})?')
+    return num.toString().match(re)[0]
+  }
+
   convert = (type) => {
     let { from, to } = this.state
 
@@ -40,10 +44,15 @@ class App extends React.Component {
       to = 'BRL'
     }
 
+    this.setState({
+      fromBase: from,
+      toBase: to,
+    })
+
     this.generateGraphData(from, to)
 
-    const { fromValue, toValue } = this.state
-    const URL = `https://api.ratesapi.io/api/latest?base=${from}&symbols=${to}`
+    const { fromValue, toValue, apiBase } = this.state
+    const URL = `${apiBase}latest?base=${from}&symbols=${to}`
 
     fetch(URL)
       .then((res) => res.json())
@@ -51,15 +60,19 @@ class App extends React.Component {
         let price = json['rates'][to]
         let coin = 0
 
+        this.setState({
+          baseToValue: this.toFixed(price, 2),
+        })
+
         if (type === 'toValue') {
-          coin = (parseFloat(toValue) * price).toFixed(2)
+          coin = this.toFixed(parseFloat(toValue) * price, 2)
           this.setState({
             fromValue: coin,
           })
           return
         }
 
-        coin = (parseFloat(fromValue) * price).toFixed(2)
+        coin = this.toFixed(parseFloat(fromValue) * price, 2)
         this.setState({
           toValue: coin,
         })
@@ -78,7 +91,7 @@ class App extends React.Component {
     }
 
     for (let day = 1; day <= days; day++) {
-      // criar um array de datas
+      // create dates array
       datesArray.push([`${year}-${month}-${day}`])
     }
 
@@ -103,8 +116,10 @@ class App extends React.Component {
     let dataLabels = []
     let dataPrice = []
 
+    const { apiBase } = this.state
+
     dates.forEach((date) => {
-      const URL = `https://api.ratesapi.io/api/${date}?base=${from}&symbols=${to}`
+      const URL = `${apiBase}${date}?base=${from}&symbols=${to}`
       fetch(URL)
         .then((res) => res.json())
         .then((json) => {
@@ -133,17 +148,8 @@ class App extends React.Component {
     })
   }
 
-  invertValues = () => {
-    this.setState((prevState) => ({
-      fromValue: prevState.toValue,
-      toValue: prevState.fromValue,
-      from: prevState.to,
-      to: prevState.from,
-    }))
-  }
-
   render() {
-    const { from, to, fromValue, toValue, Data } = this.state
+    const { from, to, fromValue, toValue, Data, fromBase, toBase, baseToValue } = this.state
 
     return (
       <main className="container">
@@ -154,13 +160,6 @@ class App extends React.Component {
             currency={from}
             value={fromValue}
             setValue={(value) => this.setAmount('fromValue', value)}
-          />
-          <Button
-            label="Invert"
-            icon="./img/invert.svg"
-            iconAlt="invert values"
-            type="ghost"
-            onClick={this.invertValues}
           />
           <CurrencyField
             label="Converted to"
@@ -173,9 +172,10 @@ class App extends React.Component {
         <div className="chart">
           <div className="chart__header d--flex a--center j--spaceBetween mb--40">
             <h1 className="fw--light">Exchange rate</h1>
-            <div className="chart__header__options btn-group">
-              <Button label="USD" type="secondary" className="is--active" />
-              <Button label="BRL" type="secondary" />
+            <div className="chart__header__rate">
+              <p className="fw--medium">
+                1 {fromBase} = {baseToValue} {toBase}
+              </p>
             </div>
           </div>
           {Data ? <BarChartComponent data={Data} /> : <>Loading</>}

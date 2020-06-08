@@ -93,6 +93,14 @@ input,
 }
 
 @media (min-width: 980px) {
+  .input-wrapper {
+    margin-right: 40px;
+  }
+
+  .input-wrapper:last-child {
+    margin-right: 0;
+  }
+
   .currency-converter {
     flex-direction: row;
   }

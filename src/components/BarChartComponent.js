@@ -31,6 +31,13 @@ const BarChartComponent = ({ data }) => {
                 },
               },
             ],
+            yAxes: [
+              {
+                ticks: {
+                  maxTicksLimit: 10,
+                },
+              },
+            ],
           },
         }}
       />
