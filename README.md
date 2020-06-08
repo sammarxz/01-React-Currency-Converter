@@ -12,3 +12,7 @@ $ cd 01-React-Currency-Converter
 $ npm install
 $ yarn start
 ```
+
+### ToDo
+* [ ] - Add More Currencies 💰🪙
+* [ ] - The graph has a strange behavior 📊🤔
