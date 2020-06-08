@@ -2,6 +2,7 @@ import React from 'react'
 
 import CurrencyField from './components/CurrencyField'
 import BarChartComponent from './components/BarChartComponent'
+import Button from './components/Button'
 
 class App extends React.Component {
   state = {
@@ -132,29 +133,51 @@ class App extends React.Component {
     })
   }
 
+  invertValues = () => {
+    this.setState((prevState) => ({
+      fromValue: prevState.toValue,
+      toValue: prevState.fromValue,
+      from: prevState.to,
+      to: prevState.from,
+    }))
+  }
+
   render() {
-    const { fromValue, toValue, Data } = this.state
+    const { from, to, fromValue, toValue, Data } = this.state
 
     return (
       <main className="container">
-        <div className="currency-converter d--flex a--center">
+        <div className="currency-converter d--flex a--center j--spaceBetween">
           <CurrencyField
             label="Amount"
             name="amount"
-            currency="BRL"
+            currency={from}
             value={fromValue}
             setValue={(value) => this.setAmount('fromValue', value)}
+          />
+          <Button
+            label="Invert"
+            icon="./img/invert.svg"
+            iconAlt="invert values"
+            type="ghost"
+            onClick={this.invertValues}
           />
           <CurrencyField
             label="Converted to"
             name="converted"
-            currency="USD"
+            currency={to}
             value={toValue}
             setValue={(value) => this.setAmount('toValue', value)}
           />
         </div>
         <div className="chart">
-          <h1 className="fw--light">Exchange rate</h1>
+          <div className="chart__header d--flex a--center j--spaceBetween mb--40">
+            <h1 className="fw--light">Exchange rate</h1>
+            <div className="chart__header__options btn-group">
+              <Button label="USD" type="secondary" className="is--active" />
+              <Button label="BRL" type="secondary" />
+            </div>
+          </div>
           {Data ? <BarChartComponent data={Data} /> : <>Loading</>}
         </div>
       </main>
